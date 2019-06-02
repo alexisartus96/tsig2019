@@ -1,0 +1,17 @@
+@font-face {
+    font-family: 'Candara';
+    font-style: normal;
+    font-weight: 400;
+    src: url('../fonts/CANDARA.TTF'); /* IE9 Compat Modes */
+    src: local('CANDARA'), local('CANDARA'),
+    url('../fonts/CANDARA.TTF?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+    url('../fonts/CANDARA.TTF') format('woff2'), /* Super Modern Browsers */
+    url('../fonts/CANDARA.TTF') format('woff'), /* Modern Browsers */
+    url('../fonts/CANDARA.TTF') format('truetype'), /* Safari, Android, iOS */
+    url('../fonts/CANDARA.TTF#Candara') format('svg'); /* Legacy iOS */
+}
+
+body {
+    margin: 0px;
+    font-family: Candara;
+}

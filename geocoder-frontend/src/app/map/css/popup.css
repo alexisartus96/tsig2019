@@ -1,0 +1,8 @@
+.popup {
+  opacity: 0.7;
+  width: 170px;
+}
+
+.popup:hover {
+  opacity: 1;
+}

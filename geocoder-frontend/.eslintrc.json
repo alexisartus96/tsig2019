@@ -1,0 +1,17 @@
+{
+    "extends": "airbnb",
+    "plugins": [
+      "react",
+      "import"
+  ],
+  "env": { 
+      "browser": true,
+      "commonjs": true,
+      "es6": true,
+      "node": true
+  },
+  "rules": {
+      "react/jsx-filename-extension": "off",
+      "react/prefer-stateless-function": [2, { "ignorePureComponents": true }]
+  }
+}

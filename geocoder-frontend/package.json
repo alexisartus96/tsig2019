@@ -1,0 +1,71 @@
+{
+  "name": "reciclando-web",
+  "version": "0.1.0",
+  "description": "Reciclando Web application",
+  "proxy": "https://pis-moove-it.github.io/reciclando-web",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Pis-moove-it/reciclando-web"
+  },
+  "private": true,
+  "dependencies": {
+    "axios": "latest",
+    "easing-js": "^1.1.2",
+    "lodash": "latest",
+    "mapbox-gl": "^0.50.0-beta.1",
+    "mapbox-gl-multitouch": "^1.0.3",
+    "performance-now": "latest",
+    "prop-types": "latest",
+    "raf": "latest",
+    "rc-progress": "^2.2.6",
+    "react": "^16.5.2",
+    "react-dom": "^16.5.2",
+    "react-loading": "^2.0.3",
+    "react-mapbox-gl": "^3.9.2",
+    "react-scripts": "2.0.4",
+    "react-scroll": "^1.7.10",
+    "react-sound": "^1.2.0",
+    "styled-components": "^3.4.9"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "lint": "eslint src --fix || exit 0"
+  },
+  "eslintConfig": {
+    "extends": "airbnb",
+    "plugins": [
+      "react",
+      "import"
+    ],
+    "env": {
+      "browser": true,
+      "commonjs": true,
+      "es6": true,
+      "node": true
+    },
+    "rules": {
+      "react/jsx-filename-extension": "off",
+      "react/prefer-stateless-function": [
+        2,
+        {
+          "ignorePureComponents": true
+        }
+      ]
+    }
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
+  "devDependencies": {
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-jsx-a11y": "^6.1.2",
+    "eslint-plugin-react": "^7.11.1"
+  }
+}
