@@ -3,25 +3,11 @@ import ReactMapboxGl, { Layer, Feature, Popup } from 'react-mapbox-gl';
 import mapboxgl from 'mapbox-gl';
 import MultiTouch from 'mapbox-gl-multitouch';
 import axios from 'axios';
-import MapComponent from '../styles/MapComponent';
 import trashLogo from '../assets/trash.png';
+import MapComponent from '../styles/MapComponent';
 import InfoComponent from '../styles/InfoComponent';
-import BoxComponent from '../styles/BoxComponent';
-import BoxTitle from '../styles/BoxTitle';
-import SubBoxTitle from '../styles/SubBoxTitle';
-import BoxInfo from '../styles/BoxInfo';
-import BoxLogo from '../styles/BoxLogo';
-import SubBoxLogo from '../styles/SubBoxLogo';
-import carton from '../assets/carton.png';
-import BoxText from '../styles/BoxText';
+import {ListItem, PointData} from '../styles/ListItem';
 import SubBoxText from '../styles/SubBoxText';
-import paper from '../assets/paper.png';
-import water from '../assets/water.png';
-import QuestionTexBox from '../styles/QuestionTextBox';
-import Question from '../styles/Question';
-import QuestionContent from '../styles/QuestionContent';
-import Text from '../styles/Text';
-import TextContent from '../styles/TextContent';
 import MapViewComponent from '../styles/MapViewComponent';
 import ButtonRoute from '../styles/ButtonRoute';
 import walking from '../assets/walking.png';
@@ -32,6 +18,7 @@ import InfoRoute from '../styles/InfoRoute';
 import popup from '../css/popup.css'; // eslint-disable-line
 import BoxButton from '../styles/BoxButton';
 import ToggleMenu from '../styles/ToggleMenu';
+import {InputName, InputNumber, SearchNav, SearchButton, SearchNavSubBox} from '../styles/SearchNav';
 
 const Map = ReactMapboxGl({
   accessToken: process.env.REACT_APP_MAPBOX_ACCESS_TOKEN,
@@ -46,107 +33,6 @@ const enableMobileScroll = (map) => {
 // Used for rendering the trash and user icons (see Layer component below)
 const trashIcon = new Image(40, 40);
 trashIcon.src = trashLogo;
-
-async function getData() {
-  await axios.post(
-    process.env.REACT_APP_CORS + process.env.REACT_APP_API_LOGIN,
-    { name: 'Abrojo', password: 'password' },
-    {
-      headers: {
-        deviceIdHeader: 'prueba',
-        deviceTypeHeader: 'prueba',
-        'Content-Type': 'application/json',
-      },
-    },
-  )
-    .then((responseLogin) => {
-      const { apikey } = responseLogin.headers;
-      this.setState({
-        apiKey: apikey,
-      });
-      // Login to user with id 1 in organization with id 1
-      axios.post(
-        process.env.REACT_APP_CORS + process.env.REACT_APP_API_LOGIN_USER,
-        { empty: '' },
-        {
-          headers: {
-            deviceIdHeader: 'prueba',
-            deviceTypeHeader: 'prueba',
-            'Content-Type': 'application/json',
-            ApiKey: this.state.apiKey,
-          },
-        },
-      )
-        .catch((error) => {
-          console.log('Api Key GET error', this.state.apiKey);
-          console.log(error);
-          if (error.response) { // If a response has been received from the server
-            console.log(error.response.data);
-            console.log(error.response.status);
-            console.log(error.response.headers);
-          }
-        });
-    })
-    .catch((error) => {
-      console.log(error);
-      if (error.response) { // If a response has been received from the server
-        console.log(error.response.data);
-        console.log(error.response.status);
-        console.log(error.response.headers);
-      }
-    });
-
-  // Fetch container list from backend
-  await axios.get(
-    process.env.REACT_APP_CORS + process.env.REACT_APP_API_CONTAINERS,
-    {
-      headers: {
-        deviceIdHeader: 'prueba',
-        deviceTypeHeader: 'prueba',
-        'Content-Type': 'application/json',
-        ApiKey: this.state.apiKey,
-      },
-    },
-  )
-    .then((res) => {
-      this.setState({
-        containers: res.data,
-      });
-    })
-    .catch((error) => {
-      console.log('Api Key GET error', this.state.apiKey);
-      console.log(error);
-      if (error.response) { // If a response has been received from the server
-        console.log(error.response.data);
-        console.log(error.response.status);
-        console.log(error.response.headers);
-      }
-    });
-
-  await axios.post(
-    process.env.REACT_APP_CORS + process.env.REACT_APP_API_ORGANIZATION_INFO,
-    { month: (new Date()).getMonth() + 1 },
-    {
-      headers: {
-        ApiKey: this.state.apiKey,
-      },
-    },
-  )
-    .then((res) => {
-      this.setState({
-        infoContainer: res.data,
-      });
-    })
-    .catch((error) => {
-      console.log('Api Key GET error', this.state.apiKey);
-      console.log(error);
-      if (error.response) { // If a response has been received from the server
-        console.log(error.response.data);
-        console.log(error.response.status);
-        console.log(error.response.headers);
-      }
-    });
-}
 
 function clearRouteInfo() {
   this.setState({
@@ -192,7 +78,7 @@ class MapContainer extends Component {
       }),
       geolocationEnabled: false,
       // Store containers list from backend. Each container has "id", "lat" and "lng"
-      containers: [],
+      containers: [{"id":1, "longitude":-56.0535183660231, "latitude":-34.8840918117887}],
       selectedId: 0,
       load: true,
       selectedLon: 0,
@@ -202,6 +88,8 @@ class MapContainer extends Component {
       apiKey: '',
       selectedDescription: '',
       showMenu: true,
+      streetName: '',
+      streetNumber: '',
     };
     const { geolocation } = this.state;
 
@@ -218,13 +106,11 @@ class MapContainer extends Component {
       this.getRoute = this.getRoute.bind(this);
       this.clearRouteInfo = clearRouteInfo.bind(this);
     }
-    this.getData = getData.bind(this);
     this.showInfo = this.showInfo.bind(this);
     this.Toggle = Toggle.bind(this);
   }
 
   componentDidMount() {
-    this.getData();
   }
 
   // lan and lat are longitude and latitude of destination
@@ -287,20 +173,109 @@ class MapContainer extends Component {
       });
   }
 
+  handleChangeName(event) {
+    this.setState({streetName: event.target.value});
+  }
+
+  handleChangeNumber(event) {
+    this.setState({streetNumber: event.target.value});
+  }
+
+  searchStreet(event) {
+    const name = this.state.streetName;
+    const number = this.state.streetNumber;
+    /*axios.get(`http://api.montevideo.gub.uy/ubicacionesRest/direcciones/posicion/${name}/${number}/`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }).then((res) => {
+      this.setState(
+        {
+         containers: [{"id": 21, "longitude": -56.1567617968387,"latitude": -34.9030764793031}, {"id": 12, "longitude":-56.0535183660231, "latitude":-34.8840918117887}]
+        },
+      );
+    })
+      .catch((error) => {
+        console.log(error);
+        if (error.response) { // If a response has been received from the server
+          console.log(error.response.data);
+          console.log(error.response.status);
+          console.log(error.response.headers);
+        }
+      });*/ 
+      const data = 'form_hf_0: url: http://localhost:8081/geoserver/ows?strict=true body:   <?xml version="1.0" encoding="UTF-8"?><wps:Execute version="1.0.0" service="WPS" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.opengis.net/wps/1.0.0" xmlns:wfs="http://www.opengis.net/wfs" xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:gml="http://www.opengis.net/gml" xmlns:ogc="http://www.opengis.net/ogc" xmlns:wcs="http://www.opengis.net/wcs/1.1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsAll.xsd"><ows:Identifier>gs:TSIGEGeocoder</ows:Identifier><wps:DataInputs><wps:Input><ows:Identifier>calle</ows:Identifier><wps:Data><wps:LiteralData>Gaboto</wps:LiteralData></wps:Data></wps:Input><wps:Input><ows:Identifier>numero</ows:Identifier><wps:Data><wps:LiteralData>1237</wps:LiteralData></wps:Data></wps:Input></wps:DataInputs><wps:ResponseForm><wps:RawDataOutput><ows:Identifier>result</ows:Identifier></wps:RawDataOutput></wps:ResponseForm></wps:Execute>'
+      axios.post(`http://localhost:8081/geoserver/ows?service=WPSversion=1.0.0&request=Execute`, data,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        
+      }).then((res) => {
+      this.setState(
+        {
+         containers: [{"id": 21, "longitude": -56.1567617968387,"latitude": -34.9030764793031}, {"id": 12, "longitude":-56.0535183660231, "latitude":-34.8840918117887}]
+        },
+      );
+    })
+      .catch((error) => {
+        console.log(error);
+        if (error.response) { // If a response has been received from the server
+          console.log(error.response.data);
+          console.log(error.response.status);
+          console.log(error.response.headers);
+        }
+      });
+     console.log(this.state.containers);
+  }
+
   render() {
-    const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Setiembre', 'Octubre',
-      'Noviembre', 'Diciembre'];
     const {
       route, distance, duration, selectedRoute,
       geolocation,
-      containers,
-      infoContainer,
+      containers, 
       showPopup, load, selectedId, selectedLat, selectedLon, showMenu, selectedDescription,
+      streetName, streetNumber
     } = this.state;
 
     return (
       <MapViewComponent>
+        <SearchNav>
+          <SearchNavSubBox>
+            <InputName type="text" placeholder="Street Name" onChange={(event)=>this.handleChangeName(event)}></InputName>
+            <InputNumber type="text" placeholder="Street Number" onChange={(event)=>this.handleChangeNumber(event)}></InputNumber>
+            <SearchButton onClick={(event)=>this.searchStreet(event)}>Search</SearchButton>
+          </SearchNavSubBox>
+        </SearchNav>
         <InfoComponent showMenu={showMenu}>
+        { (containers && containers.length > 0)
+                ? containers.map(elem => (
+                  <ListItem onClick={() => {
+                    // Check if current selected container was the last one selected before
+                    // In that case, hide the pop up
+                    const prevSelectedLat = selectedLat;
+                    const prevSelectedLon = selectedLon;
+                    this.showInfo(elem.id);
+                    if (prevSelectedLon === elem.longitude && prevSelectedLat === elem.latitude) {
+                      this.setState({
+                        showPopup: !showPopup,
+                      });
+                    } else {
+                      this.clearRouteInfo();
+                      this.setState({
+                        showPopup: true,
+                      });
+                    }
+                    this.setState({
+                      selectedId: elem.id,
+                      selectedLon: elem.longitude,
+                      selectedLat: elem.latitude,
+                      selectedDescription: elem.description,
+                    });
+                  }}>
+                    <PointData>${elem.id}</PointData>
+                  </ListItem>))
+                : null}
         </InfoComponent>
         <ToggleMenu moveLeft={showMenu} onClick={this.Toggle} />
         <MapComponent>
@@ -312,7 +287,7 @@ class MapContainer extends Component {
               width: '100%',
             }}
             center={load ? [-56.165293, -34.919999] : null}
-            zoom={load ? [13.5] : null}
+            zoom={load ? [10.5] : null}
             onStyleLoad={
           (map) => {
             // Add button to detect user's current location
@@ -374,7 +349,7 @@ class MapContainer extends Component {
               images={['trash', trashIcon]}
             >
               {/* Add containers from state */}
-              { (containers.length > 0)
+              { (containers && containers.length > 0)
                 ? containers.map(elem => (
                   <Feature
                     key={elem.id}

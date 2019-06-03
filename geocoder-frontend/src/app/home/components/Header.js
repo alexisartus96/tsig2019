@@ -55,16 +55,9 @@ class Header extends React.Component {
     };
     return (
       <Box position={position} transition={animation}>
-        <ReciclandoLogo src={logo} onClick={() => animateScroll.animateScroll.scrollToTop()} />
         <SubBox>
           <HeaderTitle onClick={() => scroll.scrollTo('Map', props)}>
-¿Dónde reciclo?
-          </HeaderTitle>
-          <HeaderTitle onClick={() => scroll.scrollTo('Trivia', props)}>
-¿Cuánto conocés?
-          </HeaderTitle>
-          <HeaderTitle onClick={() => scroll.scrollTo('Info', props)}>
-Mundo actual
+Calle y Numero
           </HeaderTitle>
         </SubBox>
       </Box>

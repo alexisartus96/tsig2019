@@ -7,7 +7,7 @@ const MapView = styled.div`
   width: 100%;
   z-index: 0;
   flex: 1;
-  height: calc(100vh - 55px); /* all vertical height minus header */
+  height: calc(100vh); /* all vertical height minus header */
   display: flex;
   flex-direction: row;
   position: relative;

@@ -13,7 +13,7 @@ export const Box = styled.header`
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-    padding: 15px;
+    padding: 5px;
     flex-wrap: wrap;
     display: flex;
     justify-content: space-between;

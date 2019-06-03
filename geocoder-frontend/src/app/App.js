@@ -9,10 +9,8 @@ import BackToTop from './home/components/BackToTop';
 const App = () => (
   <div>
     <Header />
-    <BackToTop />
     <Element id="Map" />
     <MapView />
-    <Footer />
   </div>
 );
 
