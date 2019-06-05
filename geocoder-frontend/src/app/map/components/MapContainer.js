@@ -191,13 +191,13 @@ class MapContainer extends Component {
           <wps:Input>
             <ows:Identifier>calle</ows:Identifier>
            <wps:Data>
-              <wps:LiteralData>avenida artigas</wps:LiteralData>
+              <wps:LiteralData>${name}</wps:LiteralData>
             </wps:Data>
           </wps:Input>
           <wps:Input>
             <ows:Identifier>numero</ows:Identifier>
             <wps:Data>
-              <wps:LiteralData>1404</wps:LiteralData>
+              <wps:LiteralData>${number}</wps:LiteralData>
             </wps:Data>
           </wps:Input>
         </wps:DataInputs>
@@ -206,36 +206,24 @@ class MapContainer extends Component {
             <ows:Identifier>result</ows:Identifier>
           </wps:RawDataOutput>
         </wps:ResponseForm>
-      </wps:Execute>`
-      fetch('http://localhost:8081/geoserver/ows?service=WPS&version=1.0.0&request=Execute',{
-        method: 'POST',
-        headers: {
-          "Content-Type" : "text/plain" 
-        },
-        body: data
-      }).then(res => console.log(res))
-      .catch(error => console.error('Error:', error))
-      .then(response => console.log('Success:', response));
-    
-
-      /*axios.post(`http://localhost:8081/geoserver/ows?service=WPS&version=1.0.0&request=Execute`, data, headers
-      ).then((res) => {
-        console.log(res.data);
-        this.setState(
-        {
-         containers: [{"id": 21, "longitude": -56.1567617968387,"latitude": -34.9030764793031}, {"id": 12, "longitude":-56.0535183660231, "latitude":-34.8840918117887}]
-        },
-      );
-    })
-      .catch((error) => {
-        console.log(error);
-        if (error.response) { // If a response has been received from the server
-          console.log(error.response.data);
-          console.log(error.response.status);
-          console.log(error.response.headers);
-        }
-      });*/
-     console.log(this.state.containers);
+      </wps:Execute>`;
+    const port = '8082';
+    const url = `http://localhost:${port}/geoserver/ows?service=WPS&version=1.0.0&request=Execute`;
+    const options = {
+      method: 'POST',
+      mode: 'cors',
+      headers: {
+        'Content-type': 'text/plain; charset=UTF-8'
+      },
+      body: data
+    };
+    fetch(url, options)
+      .then(response => response.text())
+      .catch(err => console.error('Error', err))
+      .then(resp => {
+        console.log(resp);  // TODO: REMOVE THIS LINE.
+        this.setState({containers: eval(resp)}); // TODO: TRY TO USE ANOTHER FUNCTION INSTEAD OF eval(resp).
+      });
   }
 
   render() {
