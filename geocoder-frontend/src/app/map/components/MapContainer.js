@@ -47,7 +47,7 @@ function clearRouteInfo() {
 // This function is triggered when Geolocation is succesfull
 function success(pos) {
   this.setState({
-    user: [pos.coords.longitude, pos.coords.latitude],
+    user: [pos.coords.longitud, pos.coords.latitud],
   });
 }
 
@@ -78,7 +78,7 @@ class MapContainer extends Component {
       }),
       geolocationEnabled: false,
       // Store containers list from backend. Each container has "id", "lat" and "lng"
-      containers: [{"id":1, "longitude":-56.0535183660231, "latitude":-34.8840918117887}],
+      containers: [{"id":1, "longitud":-56.0535183660231, "latitud":-34.8840918117887}],
       selectedId: 0,
       load: true,
       selectedLon: 0,
@@ -184,13 +184,44 @@ class MapContainer extends Component {
   searchStreet(event) {
     const name = this.state.streetName;
     const number = this.state.streetNumber;
-    /*axios.get(`http://api.montevideo.gub.uy/ubicacionesRest/direcciones/posicion/${name}/${number}/`,
-      {
+    const data = `<?xml version="1.0" encoding="UTF-8"?>
+      <wps:Execute version="1.0.0" service="WPS" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.opengis.net/wps/1.0.0" xmlns:wfs="http://www.opengis.net/wfs" xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:gml="http://www.opengis.net/gml" xmlns:ogc="http://www.opengis.net/ogc" xmlns:wcs="http://www.opengis.net/wcs/1.1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsAll.xsd">
+        <ows:Identifier>gs:TSIGEGeocoder</ows:Identifier>
+        <wps:DataInputs>
+          <wps:Input>
+            <ows:Identifier>calle</ows:Identifier>
+           <wps:Data>
+              <wps:LiteralData>avenida artigas</wps:LiteralData>
+            </wps:Data>
+          </wps:Input>
+          <wps:Input>
+            <ows:Identifier>numero</ows:Identifier>
+            <wps:Data>
+              <wps:LiteralData>1404</wps:LiteralData>
+            </wps:Data>
+          </wps:Input>
+        </wps:DataInputs>
+        <wps:ResponseForm>
+          <wps:RawDataOutput mimeType="application/gml-3.1.1">
+            <ows:Identifier>result</ows:Identifier>
+          </wps:RawDataOutput>
+        </wps:ResponseForm>
+      </wps:Execute>`
+      fetch('http://localhost:8081/geoserver/ows?service=WPS&version=1.0.0&request=Execute',{
+        method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type" : "text/plain" 
         },
-      }).then((res) => {
-      this.setState(
+        body: data
+      }).then(res => console.log(res))
+      .catch(error => console.error('Error:', error))
+      .then(response => console.log('Success:', response));
+    
+
+      /*axios.post(`http://localhost:8081/geoserver/ows?service=WPS&version=1.0.0&request=Execute`, data, headers
+      ).then((res) => {
+        console.log(res.data);
+        this.setState(
         {
          containers: [{"id": 21, "longitude": -56.1567617968387,"latitude": -34.9030764793031}, {"id": 12, "longitude":-56.0535183660231, "latitude":-34.8840918117887}]
         },
@@ -203,29 +234,7 @@ class MapContainer extends Component {
           console.log(error.response.status);
           console.log(error.response.headers);
         }
-      });*/ 
-      const data = 'form_hf_0: url: http://localhost:8081/geoserver/ows?strict=true body:   <?xml version="1.0" encoding="UTF-8"?><wps:Execute version="1.0.0" service="WPS" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.opengis.net/wps/1.0.0" xmlns:wfs="http://www.opengis.net/wfs" xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:gml="http://www.opengis.net/gml" xmlns:ogc="http://www.opengis.net/ogc" xmlns:wcs="http://www.opengis.net/wcs/1.1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsAll.xsd"><ows:Identifier>gs:TSIGEGeocoder</ows:Identifier><wps:DataInputs><wps:Input><ows:Identifier>calle</ows:Identifier><wps:Data><wps:LiteralData>Gaboto</wps:LiteralData></wps:Data></wps:Input><wps:Input><ows:Identifier>numero</ows:Identifier><wps:Data><wps:LiteralData>1237</wps:LiteralData></wps:Data></wps:Input></wps:DataInputs><wps:ResponseForm><wps:RawDataOutput><ows:Identifier>result</ows:Identifier></wps:RawDataOutput></wps:ResponseForm></wps:Execute>'
-      axios.post(`http://localhost:8081/geoserver/ows?service=WPSversion=1.0.0&request=Execute`, data,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        
-      }).then((res) => {
-      this.setState(
-        {
-         containers: [{"id": 21, "longitude": -56.1567617968387,"latitude": -34.9030764793031}, {"id": 12, "longitude":-56.0535183660231, "latitude":-34.8840918117887}]
-        },
-      );
-    })
-      .catch((error) => {
-        console.log(error);
-        if (error.response) { // If a response has been received from the server
-          console.log(error.response.data);
-          console.log(error.response.status);
-          console.log(error.response.headers);
-        }
-      });
+      });*/
      console.log(this.state.containers);
   }
 
@@ -256,7 +265,7 @@ class MapContainer extends Component {
                     const prevSelectedLat = selectedLat;
                     const prevSelectedLon = selectedLon;
                     this.showInfo(elem.id);
-                    if (prevSelectedLon === elem.longitude && prevSelectedLat === elem.latitude) {
+                    if (prevSelectedLon === elem.longitud && prevSelectedLat === elem.latitud) {
                       this.setState({
                         showPopup: !showPopup,
                       });
@@ -268,8 +277,8 @@ class MapContainer extends Component {
                     }
                     this.setState({
                       selectedId: elem.id,
-                      selectedLon: elem.longitude,
-                      selectedLat: elem.latitude,
+                      selectedLon: elem.longitud,
+                      selectedLat: elem.latitud,
                       selectedDescription: elem.description,
                     });
                   }}>
@@ -299,7 +308,7 @@ class MapContainer extends Component {
                 zoom: 13.5,
               });
               this.setState({
-                user: [e.coords.longitude, e.coords.latitude],
+                user: [e.coords.longitud, e.coords.latitud],
               });
             });
             geolocation.on('trackuserlocationstart', () => {
@@ -353,14 +362,14 @@ class MapContainer extends Component {
                 ? containers.map(elem => (
                   <Feature
                     key={elem.id}
-                    coordinates={[elem.longitude, elem.latitude]}
+                    coordinates={[elem.longitud, elem.latitud]}
                     onClick={() => {
                       // Check if current selected container was the last one selected before
                       // In that case, hide the pop up
                       const prevSelectedLat = selectedLat;
                       const prevSelectedLon = selectedLon;
                       this.showInfo(elem.id);
-                      if (prevSelectedLon === elem.longitude && prevSelectedLat === elem.latitude) {
+                      if (prevSelectedLon === elem.longitud && prevSelectedLat === elem.latitud) {
                         this.setState({
                           showPopup: !showPopup,
                         });
@@ -372,8 +381,8 @@ class MapContainer extends Component {
                       }
                       this.setState({
                         selectedId: elem.id,
-                        selectedLon: elem.longitude,
-                        selectedLat: elem.latitude,
+                        selectedLon: elem.longitud,
+                        selectedLat: elem.latitud,
                         selectedDescription: elem.description,
                       });
                     }}
