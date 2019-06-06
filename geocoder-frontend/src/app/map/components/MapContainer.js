@@ -221,8 +221,8 @@ class MapContainer extends Component {
       .then(response => response.text())
       .catch(err => console.error('Error', err))
       .then(resp => {
-        console.log(resp);  // TODO: REMOVE THIS LINE.
-        this.setState({containers: eval(resp)}); // TODO: TRY TO USE ANOTHER FUNCTION INSTEAD OF eval(resp).
+        console.log(JSON.parse(resp)); // TODO: REMOVE THIS LINE.
+        this.setState({containers: JSON.parse(resp)});
       });
   }
 
