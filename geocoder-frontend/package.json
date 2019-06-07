@@ -1,11 +1,9 @@
 {
-  "name": "reciclando-web",
+  "name": "geocoder",
   "version": "0.1.0",
-  "description": "Reciclando Web application",
-  "proxy": "https://pis-moove-it.github.io/reciclando-web",
+  "description": "Geocoder",
   "repository": {
-    "type": "git",
-    "url": "https://github.com/Pis-moove-it/reciclando-web"
+    "type": "git"
   },
   "private": true,
   "dependencies": {

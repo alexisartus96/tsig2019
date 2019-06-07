@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 import ReactMapboxGl, { Layer, Feature, Popup } from 'react-mapbox-gl';
 import mapboxgl from 'mapbox-gl';
 import MultiTouch from 'mapbox-gl-multitouch';
-import axios from 'axios';
-import trashLogo from '../assets/trash.png';
+import trashLogo from '../assets/pin.png';
 import MapComponent from '../styles/MapComponent';
 import InfoComponent from '../styles/InfoComponent';
 import {ListItem, PointData} from '../styles/ListItem';
@@ -31,7 +30,7 @@ const enableMobileScroll = (map) => {
 };
 
 // Used for rendering the trash and user icons (see Layer component below)
-const trashIcon = new Image(40, 40);
+const trashIcon = new Image(20, 20);
 trashIcon.src = trashLogo;
 
 function clearRouteInfo() {
@@ -78,7 +77,7 @@ class MapContainer extends Component {
       }),
       geolocationEnabled: false,
       // Store containers list from backend. Each container has "id", "lat" and "lng"
-      containers: [{"id":1, "longitud":-56.0535183660231, "latitud":-34.8840918117887}],
+      containers: [],
       selectedId: 0,
       load: true,
       selectedLon: 0,
@@ -87,9 +86,7 @@ class MapContainer extends Component {
       infoContainer: '',
       apiKey: '',
       selectedDescription: '',
-      showMenu: true,
-      streetName: '',
-      streetNumber: '',
+      showMenu: true
     };
     const { geolocation } = this.state;
 
@@ -106,7 +103,6 @@ class MapContainer extends Component {
       this.getRoute = this.getRoute.bind(this);
       this.clearRouteInfo = clearRouteInfo.bind(this);
     }
-    this.showInfo = this.showInfo.bind(this);
     this.Toggle = Toggle.bind(this);
   }
 
@@ -146,33 +142,6 @@ class MapContainer extends Component {
     }
   }
 
-  showInfo(id) {
-    axios.get(`${process.env.REACT_APP_CORS + process.env.REACT_APP_API_CONTAINERS}/${id}`,
-      {
-        headers: {
-          deviceIdHeader: 'prueba',
-          deviceTypeHeader: 'prueba',
-          'Content-Type': 'application/json',
-          ApiKey: this.state.apiKey,
-        },
-      }).then((res) => {
-      this.setState(
-        {
-          infoContainer: res.data,
-          load: false,
-        },
-      );
-    })
-      .catch((error) => {
-        console.log(error);
-        if (error.response) { // If a response has been received from the server
-          console.log(error.response.data);
-          console.log(error.response.status);
-          console.log(error.response.headers);
-        }
-      });
-  }
-
   handleChangeName(event) {
     this.setState({streetName: event.target.value});
   }
@@ -207,7 +176,7 @@ class MapContainer extends Component {
           </wps:RawDataOutput>
         </wps:ResponseForm>
       </wps:Execute>`;
-    const port = '8082';
+    const port = '8081';
     const url = `http://localhost:${port}/geoserver/ows?service=WPS&version=1.0.0&request=Execute`;
     const options = {
       method: 'POST',
@@ -231,8 +200,7 @@ class MapContainer extends Component {
       route, distance, duration, selectedRoute,
       geolocation,
       containers, 
-      showPopup, load, selectedId, selectedLat, selectedLon, showMenu, selectedDescription,
-      streetName, streetNumber
+      showPopup, load, selectedId, selectedLat, selectedLon, showMenu, selectedDescription
     } = this.state;
 
     return (
@@ -247,12 +215,11 @@ class MapContainer extends Component {
         <InfoComponent showMenu={showMenu}>
         { (containers && containers.length > 0)
                 ? containers.map(elem => (
-                  <ListItem onClick={() => {
+                  <ListItem key={elem.codigo_via} onClick={() => {
                     // Check if current selected container was the last one selected before
                     // In that case, hide the pop up
                     const prevSelectedLat = selectedLat;
                     const prevSelectedLon = selectedLon;
-                    this.showInfo(elem.id);
                     if (prevSelectedLon === elem.longitud && prevSelectedLat === elem.latitud) {
                       this.setState({
                         showPopup: !showPopup,
@@ -264,13 +231,13 @@ class MapContainer extends Component {
                       });
                     }
                     this.setState({
-                      selectedId: elem.id,
+                      selectedId: elem.codigo_via,
                       selectedLon: elem.longitud,
                       selectedLat: elem.latitud,
-                      selectedDescription: elem.description,
+                      selectedDescription: elem.nombre_via,
                     });
                   }}>
-                    <PointData>${elem.id}</PointData>
+                    <PointData>{elem.nombre_via + " - " + elem.puerta}</PointData>
                   </ListItem>))
                 : null}
         </InfoComponent>
@@ -349,14 +316,13 @@ class MapContainer extends Component {
               { (containers && containers.length > 0)
                 ? containers.map(elem => (
                   <Feature
-                    key={elem.id}
+                    key={elem.codigo_via}
                     coordinates={[elem.longitud, elem.latitud]}
                     onClick={() => {
                       // Check if current selected container was the last one selected before
                       // In that case, hide the pop up
                       const prevSelectedLat = selectedLat;
                       const prevSelectedLon = selectedLon;
-                      this.showInfo(elem.id);
                       if (prevSelectedLon === elem.longitud && prevSelectedLat === elem.latitud) {
                         this.setState({
                           showPopup: !showPopup,
@@ -368,10 +334,10 @@ class MapContainer extends Component {
                         });
                       }
                       this.setState({
-                        selectedId: elem.id,
+                        selectedId: elem.codigo_via,
                         selectedLon: elem.longitud,
                         selectedLat: elem.latitud,
-                        selectedDescription: elem.description,
+                        selectedDescription: elem.nombre_via,
                       });
                     }}
                   />))
@@ -390,38 +356,6 @@ class MapContainer extends Component {
                     // if the device and the browser supports geolocation
                     ? (
                       <RouteBox>
-                        <BoxButton>
-                          <ButtonRoute
-                            img={walking}
-                            onClick={() => {
-                              this.getRoute(selectedLon, selectedLat, 'walking');
-                              this.setState({
-                                selectedRoute: 'walking',
-                              });
-                            }}
-                            selected={selectedRoute === 'walking'}
-                          />
-                          <ButtonRoute
-                            img={bicycle}
-                            onClick={() => {
-                              this.getRoute(selectedLon, selectedLat, 'cycling');
-                              this.setState({
-                                selectedRoute: 'cycling',
-                              });
-                            }}
-                            selected={selectedRoute === 'cycling'}
-                          />
-                          <ButtonRoute
-                            img={car}
-                            onClick={() => {
-                              this.getRoute(selectedLon, selectedLat, 'driving');
-                              this.setState({
-                                selectedRoute: 'driving',
-                              });
-                            }}
-                            selected={selectedRoute === 'driving'}
-                          />
-                        </BoxButton>
                         { route && (
                           // Render distance and estimated time converted to km and min
                           // and rounded to one decimal

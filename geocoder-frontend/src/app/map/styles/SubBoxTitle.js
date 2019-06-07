@@ -21,7 +21,7 @@ const SubBoxTitle = styled.a`
   }
 
   @media (max-width: 425px) {
-    font-size: 15px;
+    font-size: 12px;
   }
 `;
 
