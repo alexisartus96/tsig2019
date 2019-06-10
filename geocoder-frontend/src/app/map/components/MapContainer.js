@@ -150,7 +150,13 @@ class MapContainer extends Component {
     this.setState({streetNumber: event.target.value});
   }
 
-  searchStreet(event) {
+  handleKeyDown(event) {
+    if (event.key === 'Enter') {
+      this.searchStreet();
+    }
+  }
+
+  searchStreet() {
     const name = this.state.streetName;
     const number = this.state.streetNumber;
     const data = `<?xml version="1.0" encoding="UTF-8"?>
@@ -207,9 +213,19 @@ class MapContainer extends Component {
       <MapViewComponent>
         <SearchNav>
           <SearchNavSubBox>
-            <InputName type="text" placeholder="Street Name" onChange={(event)=>this.handleChangeName(event)}></InputName>
-            <InputNumber type="text" placeholder="Street Number" onChange={(event)=>this.handleChangeNumber(event)}></InputNumber>
-            <SearchButton onClick={(event)=>this.searchStreet(event)}>Search</SearchButton>
+            <InputName
+              type="text"
+              placeholder="Street Name"
+              onChange={(event) => this.handleChangeName(event)}
+              onKeyDown={(event) => this.handleKeyDown(event)}
+            />
+            <InputNumber
+              type="text"
+              placeholder="Street Number"
+              onChange={(event) => this.handleChangeNumber(event)}
+              onKeyDown={(event) => this.handleKeyDown(event)}
+            />
+            <SearchButton onClick={this.searchStreet}>Search</SearchButton>
           </SearchNavSubBox>
         </SearchNav>
         <InfoComponent showMenu={showMenu}>
