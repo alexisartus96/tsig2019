@@ -192,7 +192,10 @@ class MapContainer extends Component {
       .catch(err => console.error('Error', err))
       .then(resp => {
         console.log(JSON.parse(resp)); // TODO: REMOVE THIS LINE.
-        this.setState({containers: JSON.parse(resp)});
+        this.setState({
+          showPopup: false,  // "clean" previous search
+          containers: JSON.parse(resp)
+        });
       });
   }
 
