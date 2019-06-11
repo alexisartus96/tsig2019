@@ -52,6 +52,77 @@ function Toggle() {
   );
 }
 
+const XMLGeocoder = (street, number) => (`<?xml version="1.0" encoding="UTF-8"?>
+  <wps:Execute version="1.0.0" service="WPS" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.opengis.net/wps/1.0.0" xmlns:wfs="http://www.opengis.net/wfs" xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:gml="http://www.opengis.net/gml" xmlns:ogc="http://www.opengis.net/ogc" xmlns:wcs="http://www.opengis.net/wcs/1.1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsAll.xsd">
+    <ows:Identifier>gs:TSIGEGeocoder</ows:Identifier>
+    <wps:DataInputs>
+      <wps:Input>
+        <ows:Identifier>calle</ows:Identifier>
+      <wps:Data>
+          <wps:LiteralData>${street}</wps:LiteralData>
+        </wps:Data>
+      </wps:Input>
+      <wps:Input>
+        <ows:Identifier>numero</ows:Identifier>
+        <wps:Data>
+          <wps:LiteralData>${number}</wps:LiteralData>
+        </wps:Data>
+      </wps:Input>
+    </wps:DataInputs>
+    <wps:ResponseForm>
+      <wps:RawDataOutput mimeType="application/gml-3.1.1">
+        <ows:Identifier>result</ows:Identifier>
+      </wps:RawDataOutput>
+    </wps:ResponseForm>
+  </wps:Execute>`);
+
+const XMLGeocoderCruce = (street, corner) => (`<?xml version="1.0" encoding="UTF-8"?>
+  <wps:Execute version="1.0.0" service="WPS" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.opengis.net/wps/1.0.0" xmlns:wfs="http://www.opengis.net/wfs" xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:gml="http://www.opengis.net/gml" xmlns:ogc="http://www.opengis.net/ogc" xmlns:wcs="http://www.opengis.net/wcs/1.1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsAll.xsd">
+    <ows:Identifier>gs:TSIGEGeocoderCruce</ows:Identifier>
+    <wps:DataInputs>
+      <wps:Input>
+        <ows:Identifier>calle</ows:Identifier>
+        <wps:Data>
+          <wps:LiteralData>${street}</wps:LiteralData>
+        </wps:Data>
+      </wps:Input>
+      <wps:Input>
+        <ows:Identifier>esquina</ows:Identifier>
+        <wps:Data>
+          <wps:LiteralData>${corner}</wps:LiteralData>
+        </wps:Data>
+      </wps:Input>
+    </wps:DataInputs>
+    <wps:ResponseForm>
+      <wps:RawDataOutput>
+        <ows:Identifier>result</ows:Identifier>
+      </wps:RawDataOutput>
+    </wps:ResponseForm>
+  </wps:Execute>`);
+
+const XMLGeocoderInversa = (lat, lon) => (`<?xml version="1.0" encoding="UTF-8"?><wps:Execute version="1.0.0" service="WPS" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.opengis.net/wps/1.0.0" xmlns:wfs="http://www.opengis.net/wfs" xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:gml="http://www.opengis.net/gml" xmlns:ogc="http://www.opengis.net/ogc" xmlns:wcs="http://www.opengis.net/wcs/1.1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsAll.xsd">
+  <ows:Identifier>gs:TSIGEGeocoderInverso</ows:Identifier>
+  <wps:DataInputs>
+    <wps:Input>
+      <ows:Identifier>longitud</ows:Identifier>
+      <wps:Data>
+        <wps:LiteralData>${lon}</wps:LiteralData>
+      </wps:Data>
+    </wps:Input>
+    <wps:Input>
+      <ows:Identifier>latitud</ows:Identifier>
+      <wps:Data>
+        <wps:LiteralData>${lat}</wps:LiteralData>
+      </wps:Data>
+    </wps:Input>
+  </wps:DataInputs>
+  <wps:ResponseForm>
+    <wps:RawDataOutput>
+      <ows:Identifier>result</ows:Identifier>
+    </wps:RawDataOutput>
+  </wps:ResponseForm>
+  </wps:Execute>`);
+
 class MapContainer extends Component {
   constructor(props) {
     super(props);
@@ -140,31 +211,32 @@ class MapContainer extends Component {
 
   handleChangeSearchType = (e) => {
     const searchType = e.target.value;
-    this.setState({ searchType });
-    const input1 = document.getElementById('input1');
-    const input2 = document.getElementById('input2');
-    // Enable inputs
-    input1.disabled = false;
-    input2.disabled = false;
-    // Clean inputs
-    input1.value = '';
-    input2.value = '';
+    this.setState({ searchType }, () => {
+      const input1 = document.getElementById('input1');
+      const input2 = document.getElementById('input2');
+      // Enable inputs
+      input1.disabled = false;
+      input2.disabled = false;
+      // Clean inputs
+      input1.value = '';
+      input2.value = '';
 
-    if (searchType === 'calle-numero') {
-      input1.placeholder = 'Street Name';
-      input2.placeholder = 'Street Number';
+      if (searchType === 'calle-numero') {
+        input1.placeholder = 'Street Name';
+        input2.placeholder = 'Street Number';
 
-    } else if (searchType === 'esquina') {
-      input1.placeholder = 'Street Name';
-      input2.placeholder = 'Street Name';
+      } else if (searchType === 'esquina') {
+        input1.placeholder = 'Street Name';
+        input2.placeholder = 'Street Name';
 
-    } else if (searchType === 'inversa') {
-      input1.placeholder = 'Lat';
-      input2.placeholder = 'Lon';
-      // Disable inputs
-      input1.disabled = true;
-      input2.disabled = true;
-    }
+      } else if (searchType === 'inversa') {
+        input1.placeholder = 'Lat';
+        input2.placeholder = 'Lon';
+        // Disable inputs
+        input1.disabled = true;
+        input2.disabled = true;
+      }
+    });
   }
 
   handleChangeName(event) {
@@ -181,32 +253,25 @@ class MapContainer extends Component {
     }
   }
 
-  searchStreet() {
-    const name = this.state.streetName;
-    const number = this.state.streetNumber;
-    const data = `<?xml version="1.0" encoding="UTF-8"?>
-      <wps:Execute version="1.0.0" service="WPS" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.opengis.net/wps/1.0.0" xmlns:wfs="http://www.opengis.net/wfs" xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:gml="http://www.opengis.net/gml" xmlns:ogc="http://www.opengis.net/ogc" xmlns:wcs="http://www.opengis.net/wcs/1.1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsAll.xsd">
-        <ows:Identifier>gs:TSIGEGeocoder</ows:Identifier>
-        <wps:DataInputs>
-          <wps:Input>
-            <ows:Identifier>calle</ows:Identifier>
-           <wps:Data>
-              <wps:LiteralData>${name}</wps:LiteralData>
-            </wps:Data>
-          </wps:Input>
-          <wps:Input>
-            <ows:Identifier>numero</ows:Identifier>
-            <wps:Data>
-              <wps:LiteralData>${number}</wps:LiteralData>
-            </wps:Data>
-          </wps:Input>
-        </wps:DataInputs>
-        <wps:ResponseForm>
-          <wps:RawDataOutput mimeType="application/gml-3.1.1">
-            <ows:Identifier>result</ows:Identifier>
-          </wps:RawDataOutput>
-        </wps:ResponseForm>
-      </wps:Execute>`;
+  searchStreet = () => {
+    // TODO: Improve this
+    let searchType = 'calle-numero'
+    document.querySelectorAll('[name=searchType]').forEach((elem) => {
+      if (elem.checked) {
+        searchType = elem.value
+      }
+    });
+    const input1 = document.getElementById('input1');
+    const input2 = document.getElementById('input2');
+    let data = '';
+    if (searchType === 'calle-numero') {
+      data = XMLGeocoder(input1.value, input2.value);
+    } else if (searchType === 'esquina') {
+      data = XMLGeocoderCruce(input1.value, input2.value);
+    } else if (searchType === 'inversa') {
+      data = XMLGeocoderInversa(input1.value, input2.value);
+    }
+
     const port = '8082';
     const url = `http://localhost:${port}/geoserver/ows?service=WPS&version=1.0.0&request=Execute`;
     const options = {
@@ -250,7 +315,7 @@ class MapContainer extends Component {
                 <InputRadioButton
                   type="radio"
                   value="calle-numero"
-                  name="seachType"
+                  name="searchType"
                   checked={this.radioButtonIsChecked('calle-numero')}
                   onChange={this.handleChangeSearchType}
                 />
@@ -260,7 +325,7 @@ class MapContainer extends Component {
                 <InputRadioButton
                   type="radio"
                   value="esquina"
-                  name="seachType"
+                  name="searchType"
                   checked={this.radioButtonIsChecked('esquina')}
                   onChange={this.handleChangeSearchType}
                 />
@@ -270,7 +335,7 @@ class MapContainer extends Component {
                 <InputRadioButton
                   type="radio"
                   value="inversa"
-                  name="seachType"
+                  name="searchType"
                   checked={this.radioButtonIsChecked('inversa')}
                   onChange={this.handleChangeSearchType}
                 />
