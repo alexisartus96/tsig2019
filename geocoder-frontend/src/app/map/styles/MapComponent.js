@@ -8,7 +8,8 @@ const MapComponent = styled.div`
   flex: 3;
   position: absolute;
   width: 100%;
-  height: calc(100vh - 55px); /* all vertical height minus header */
+  height: calc(100vh - 72px); /* all vertical height minus header */
+  top: 72px;
 `;
 
 export default MapComponent;

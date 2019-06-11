@@ -11,7 +11,7 @@ import MapViewComponent from '../styles/MapViewComponent';
 import RouteBox from '../styles/RouteBox';
 import InfoRoute from '../styles/InfoRoute';
 import ToggleMenu from '../styles/ToggleMenu';
-import {InputName, InputNumber, SearchNav, SearchButton, SearchNavSubBox} from '../styles/SearchNav';
+import { InputName, InputNumber, InputRadioButton, LabelRadioButton, SearchButton, SearchNav, SearchNavSubBox, InputGroup } from '../styles/SearchNav';
 
 const Map = ReactMapboxGl({
   accessToken: process.env.REACT_APP_MAPBOX_ACCESS_TOKEN,
@@ -81,6 +81,7 @@ class MapContainer extends Component {
       apiKey: '',
       selectedDescription: '',
       selectedNumber: 0,
+      searchType: 'calle-numero',
       showMenu: true
     };
     const { geolocation } = this.state;
@@ -137,6 +138,35 @@ class MapContainer extends Component {
     }
   }
 
+  handleChangeSearchType = (e) => {
+    const searchType = e.target.value;
+    this.setState({ searchType });
+    const input1 = document.getElementById('input1');
+    const input2 = document.getElementById('input2');
+    // Enable inputs
+    input1.disabled = false;
+    input2.disabled = false;
+    // Clean inputs
+    input1.value = '';
+    input2.value = '';
+
+    if (searchType === 'calle-numero') {
+      input1.placeholder = 'Street Name';
+      input2.placeholder = 'Street Number';
+
+    } else if (searchType === 'esquina') {
+      input1.placeholder = 'Street Name';
+      input2.placeholder = 'Street Name';
+
+    } else if (searchType === 'inversa') {
+      input1.placeholder = 'Lat';
+      input2.placeholder = 'Lon';
+      // Disable inputs
+      input1.disabled = true;
+      input2.disabled = true;
+    }
+  }
+
   handleChangeName(event) {
     this.setState({streetName: event.target.value});
   }
@@ -177,7 +207,7 @@ class MapContainer extends Component {
           </wps:RawDataOutput>
         </wps:ResponseForm>
       </wps:Execute>`;
-    const port = '8081';
+    const port = '8082';
     const url = `http://localhost:${port}/geoserver/ows?service=WPS&version=1.0.0&request=Execute`;
     const options = {
       method: 'POST',
@@ -199,6 +229,10 @@ class MapContainer extends Component {
       });
   }
 
+  radioButtonIsChecked = (searchType) => {
+    return this.state.searchType === searchType
+  }
+
   render() {
     const {
       route, distance, duration, selectedRoute,
@@ -211,19 +245,55 @@ class MapContainer extends Component {
       <MapViewComponent>
         <SearchNav>
           <SearchNavSubBox>
-            <InputName
-              type="text"
-              placeholder="Street Name"
-              onChange={(event) => this.handleChangeName(event)}
-              onKeyDown={(event) => this.handleKeyDown(event)}
-            />
-            <InputNumber
-              type="text"
-              placeholder="Street Number"
-              onChange={(event) => this.handleChangeNumber(event)}
-              onKeyDown={(event) => this.handleKeyDown(event)}
-            />
-            <SearchButton onClick={this.searchStreet}>Search</SearchButton>
+            <InputGroup>
+              <LabelRadioButton>
+                <InputRadioButton
+                  type="radio"
+                  value="calle-numero"
+                  name="seachType"
+                  checked={this.radioButtonIsChecked('calle-numero')}
+                  onChange={this.handleChangeSearchType}
+                />
+                  Calle y Número
+              </LabelRadioButton>
+              <LabelRadioButton>
+                <InputRadioButton
+                  type="radio"
+                  value="esquina"
+                  name="seachType"
+                  checked={this.radioButtonIsChecked('esquina')}
+                  onChange={this.handleChangeSearchType}
+                />
+                  Esquina
+              </LabelRadioButton>
+              <LabelRadioButton>
+                <InputRadioButton
+                  type="radio"
+                  value="inversa"
+                  name="seachType"
+                  checked={this.radioButtonIsChecked('inversa')}
+                  onChange={this.handleChangeSearchType}
+                />
+                  Inversa
+              </LabelRadioButton>
+            </InputGroup>
+            <InputGroup>
+              <InputName
+                type="text"
+                id="input1"
+                placeholder="Street Name"
+                onChange={(event) => this.handleChangeName(event)}
+                onKeyDown={(event) => this.handleKeyDown(event)}
+              />
+              <InputNumber
+                type="text"
+                id="input2"
+                placeholder="Street Number"
+                onChange={(event) => this.handleChangeNumber(event)}
+                onKeyDown={(event) => this.handleKeyDown(event)}
+              />
+              <SearchButton onClick={this.searchStreet}>Search</SearchButton>
+            </InputGroup>
           </SearchNavSubBox>
         </SearchNav>
         <InfoComponent showMenu={showMenu}>
@@ -303,7 +373,13 @@ class MapContainer extends Component {
             });
 
             map.on('click', (e) => {
-              console.log(`Click en mapa: ${e.lngLat}`);
+              if (this.state.searchType === 'inversa') {
+                // Set latitude and longitude to the inputs
+                const input1 = document.getElementById('input1');
+                const input2 = document.getElementById('input2');
+                input1.value = e.lngLat.lat;
+                input2.value = e.lngLat.lng;
+              }
             });
           }
         }
