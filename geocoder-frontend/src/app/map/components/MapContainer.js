@@ -8,14 +8,8 @@ import InfoComponent from '../styles/InfoComponent';
 import {ListItem, PointData} from '../styles/ListItem';
 import SubBoxText from '../styles/SubBoxText';
 import MapViewComponent from '../styles/MapViewComponent';
-import ButtonRoute from '../styles/ButtonRoute';
-import walking from '../assets/walking.png';
-import bicycle from '../assets/bicycle.png';
-import car from '../assets/car.png';
 import RouteBox from '../styles/RouteBox';
 import InfoRoute from '../styles/InfoRoute';
-import popup from '../css/popup.css'; // eslint-disable-line
-import BoxButton from '../styles/BoxButton';
 import ToggleMenu from '../styles/ToggleMenu';
 import {InputName, InputNumber, SearchNav, SearchButton, SearchNavSubBox} from '../styles/SearchNav';
 
