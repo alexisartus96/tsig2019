@@ -5,7 +5,7 @@ export const ListItem = styled.div`
   width: 90%;
   color: #8C8C8C;
   font-size: 12px;
-  line-height: 8px;
+  line-height: 1.4;
   min-height: 24px;
   padding-top: 1px;
   padding-bottom: 7px;
