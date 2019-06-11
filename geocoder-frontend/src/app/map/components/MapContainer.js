@@ -302,11 +302,9 @@ class MapContainer extends Component {
               map.getCanvas().style.cursor = '';
             });
 
-            map.on('MapTouchEvent', () => {
-              console.log(
-                  "algo"
-              )
-            })
+            map.on('click', (e) => {
+              console.log(`Click en mapa: ${e.lngLat}`);
+            });
           }
         }
           >
