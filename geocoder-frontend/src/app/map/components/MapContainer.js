@@ -80,6 +80,7 @@ class MapContainer extends Component {
       infoContainer: '',
       apiKey: '',
       selectedDescription: '',
+      selectedNumber: 0,
       showMenu: true
     };
     const { geolocation } = this.state;
@@ -200,7 +201,7 @@ class MapContainer extends Component {
       route, distance, duration, selectedRoute,
       geolocation,
       containers, 
-      showPopup, load, selectedId, selectedLat, selectedLon, showMenu, selectedDescription
+      showPopup, load, selectedId, selectedLat, selectedLon, showMenu, selectedDescription, selectedNumber
     } = this.state;
 
     return (
@@ -245,9 +246,10 @@ class MapContainer extends Component {
                       selectedLon: elem.longitud,
                       selectedLat: elem.latitud,
                       selectedDescription: elem.nombre_via,
+                      selectedNumber: elem.puerta
                     });
                   }}>
-                    <PointData>{elem.nombre_via + " - " + elem.puerta}</PointData>
+                    <PointData>{`${elem.nombre_via} - ${elem.puerta}`}</PointData>
                   </ListItem>))
                 : null}
         </InfoComponent>
@@ -348,6 +350,7 @@ class MapContainer extends Component {
                         selectedLon: elem.longitud,
                         selectedLat: elem.latitud,
                         selectedDescription: elem.nombre_via,
+                        selectedNumber: elem.puerta
                       });
                     }}
                   />))
@@ -360,7 +363,7 @@ class MapContainer extends Component {
                   coordinates={[selectedLon, selectedLat]}
                   className="popup"
                 >
-                  <SubBoxText textAlign="center" width="170px">{selectedDescription}</SubBoxText>
+                  <SubBoxText textAlign="center" width="170px">{`${selectedDescription} - ${selectedNumber}`}</SubBoxText>
                   { (navigator.geolocation)
                     // Only show route buttons and route info
                     // if the device and the browser supports geolocation
