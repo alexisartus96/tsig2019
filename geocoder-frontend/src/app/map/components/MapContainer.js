@@ -330,14 +330,28 @@ class MapContainer extends Component {
                 map.getCanvas().style.cursor = "";
               });
 
-              map.on("click", e => {
-                if (this.state.searchType === "inversa") {
-                  // Set latitude and longitude to the inputs
-                  const input1 = document.getElementById("input1");
-                  const input2 = document.getElementById("input2");
-                  input1.value = e.lngLat.lat;
-                  input2.value = e.lngLat.lng;
-                }
+              // To differenciate between 'click' and 'double click' actions
+              let timer = 0;
+              let delay = 200;
+              let prevent = false;
+              map.on("click", (e) => {
+                timer = setTimeout(() => {
+                  if (!prevent) {
+                    if (this.state.searchType === "inversa") {
+                      // Set latitude and longitude to the inputs
+                      const input1 = document.getElementById("input1");
+                      const input2 = document.getElementById("input2");
+                      input1.value = e.lngLat.lat;
+                      input2.value = e.lngLat.lng;
+                      this.searchStreet();
+                    }
+                  }
+                  prevent = false;
+                }, delay);
+
+              }).on("dblclick", () => {
+                clearTimeout(timer);
+                prevent = true;
               });
             }}
           >
