@@ -58,6 +58,7 @@ class MapContainer extends Component {
       }),
       geolocationEnabled: false,
       infoLocation: '',
+      noResults: false,
       searchType: 'calle-numero',
       selectedDescription: '',
       selectedId: 0,
@@ -174,7 +175,8 @@ class MapContainer extends Component {
         console.log(respWithoutDuplicated); // TODO: REMOVE THIS LINE.
         this.setState({
           showPopup: false,  // "clean" previous search
-          locations: respWithoutDuplicated
+          locations: respWithoutDuplicated,
+          noResults: respWithoutDuplicated.length === 0
         });
       });
   }
@@ -184,7 +186,7 @@ class MapContainer extends Component {
   render = () => {
     const {
       geolocation,
-      locations,
+      locations, noResults,
       selectedDescription, selectedId, selectedLat, selectedLon, selectedNumber,
       showMenu, showPopup
     } = this.state;
@@ -272,6 +274,11 @@ class MapContainer extends Component {
                     <PointData>{`${elem.nombre_via} - ${elem.puerta}`}</PointData>
                   </ListItem>))
                 : null}
+          {noResults && (
+            <ListItem>
+              <PointData>NO SE ENCONTRATON RESULTADOS</PointData>
+            </ListItem>
+          )}
         </InfoComponent>
         <ToggleMenu moveLeft={showMenu} onClick={this.Toggle} />
         <MapComponent>
