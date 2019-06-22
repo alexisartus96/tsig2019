@@ -2,12 +2,11 @@ import styled from 'styled-components';
 import leftArrow from '../assets/left-arrow.svg';
 
 const ToggleMenu = styled.div`
-  background: #fff;
   padding: 2px;
   width: 23px;
   height: 48px;
   cursor: pointer;
-  background: rgba(255,255,255,0.9) url(${leftArrow}) center/11px 15px no-repeat;
+  background: #FFFFFF url(${leftArrow}) center/11px 15px no-repeat;
   border-left: 1px solid #D4D4D4;
   box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.3);
   position: absolute;
