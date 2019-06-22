@@ -34,11 +34,9 @@ function success(pos) {
 }
 
 function Toggle() {
-  this.setState(
-    {
-      showMenu: !this.state.showMenu,
-    },
-  );
+  this.setState({
+    showMenu: !this.state.showMenu,
+  });
 }
 
 const XMLGeocoder = (street, number) => (`<?xml version="1.0" encoding="UTF-8"?>
@@ -116,7 +114,8 @@ class MapContainer extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      user: [],
+      apiKey: '',
+      containers: [], // Store containers list from backend. Each container has "id", "lat" and "lng"
       geolocation: new mapboxgl.GeolocateControl({
         positionOptions: {
           enableHighAccuracy: true,
@@ -126,19 +125,17 @@ class MapContainer extends Component {
         trackUserLocation: true,
       }),
       geolocationEnabled: false,
-      // Store containers list from backend. Each container has "id", "lat" and "lng"
-      containers: [],
-      selectedId: 0,
-      load: true,
-      selectedLon: 0,
-      selectedLat: 0,
-      showPopup: false,
       infoContainer: '',
-      apiKey: '',
-      selectedDescription: '',
-      selectedNumber: 0,
+      load: true,
       searchType: 'calle-numero',
-      showMenu: true
+      selectedDescription: '',
+      selectedId: 0,
+      selectedLat: 0,
+      selectedLon: 0,
+      selectedNumber: 0,
+      showMenu: true,
+      showPopup: false,
+      user: []
     };
     const { geolocation } = this.state;
 
@@ -156,7 +153,7 @@ class MapContainer extends Component {
     this.Toggle = Toggle.bind(this);
   }
 
-  componentDidMount() {
+  componentDidMount = () => {
   }
 
   handleChangeSearchType = (e) => {
@@ -189,16 +186,16 @@ class MapContainer extends Component {
     });
   }
 
-  handleChangeName(event) {
-    this.setState({streetName: event.target.value});
+  handleChangeName = (e) => {
+    this.setState({streetName: e.target.value});
   }
 
-  handleChangeNumber(event) {
-    this.setState({streetNumber: event.target.value});
+  handleChangeNumber = (e) => {
+    this.setState({streetNumber: e.target.value});
   }
 
-  handleKeyDown(event) {
-    if (event.key === 'Enter') {
+  handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
       this.searchStreet();
     }
   }
@@ -244,11 +241,9 @@ class MapContainer extends Component {
       });
   }
 
-  radioButtonIsChecked = (searchType) => {
-    return this.state.searchType === searchType
-  }
+  radioButtonIsChecked = (searchType) => (this.state.searchType === searchType);
 
-  render() {
+  render = () => {
     const {
       geolocation,
       containers, 
