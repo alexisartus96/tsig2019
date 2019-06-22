@@ -167,46 +167,12 @@ class MapContainer extends Component {
     // Check if geolocation is available in this device and browser
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(success.bind(this));
-      this.getRoute = this.getRoute.bind(this);
       this.clearRouteInfo = clearRouteInfo.bind(this);
     }
     this.Toggle = Toggle.bind(this);
   }
 
   componentDidMount() {
-  }
-
-  // lan and lat are longitude and latitude of destination
-  // type can only be 'walking', 'driving' or 'cycling'
-  getRoute(lng, lat, type) {
-    // Update user current location
-    const { geolocation, geolocationEnabled } = this.state;
-    // Check if geolocation is available in this device and browser
-    if (navigator.geolocation) {
-      // If geolocation button isn't currently activated
-      if (!geolocationEnabled) {
-        geolocation.trigger();
-        this.setState({
-          geolocationEnabled: true,
-        });
-        navigator.geolocation.getCurrentPosition(success.bind(this));
-      }
-      const { user } = this.state;
-      const start = user;
-      const end = [lng, lat];
-      const apiCall = `${process.env.REACT_APP_MAPBOX_DIRECTIONS}mapbox/${type}/${start[0]},${start[1]};${end[0]},${end[1]}?geometries=geojson&access_token=${process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}`;
-      fetch(apiCall)
-        .then(result => result.json())
-        .then((data) => {
-          if (data.routes) { // Only attempt to set route state if Mapbox API sent a response
-            this.setState({
-              route: data.routes[0].geometry.coordinates,
-              distance: data.routes[0].distance,
-              duration: data.routes[0].duration,
-            });
-          }
-        });
-    }
   }
 
   handleChangeSearchType = (e) => {
