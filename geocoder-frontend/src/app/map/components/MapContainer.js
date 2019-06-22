@@ -101,16 +101,16 @@ class MapContainer extends Component {
       input2.value = '';
 
       if (searchType === 'calle-numero') {
-        input1.placeholder = 'Street Name';
-        input2.placeholder = 'Street Number';
+        input1.placeholder = 'Nombre calle';
+        input2.placeholder = 'Número puerta';
 
       } else if (searchType === 'esquina') {
-        input1.placeholder = 'Street Name';
-        input2.placeholder = 'Street Name';
+        input1.placeholder = 'Nombre calle 1';
+        input2.placeholder = 'Nombre calle 2';
 
       } else if (searchType === 'inversa') {
-        input1.placeholder = 'Lat';
-        input2.placeholder = 'Lon';
+        input1.placeholder = 'Latitud';
+        input2.placeholder = 'Longitud';
         // Disable inputs
         input1.disabled = true;
         input2.disabled = true;
@@ -229,18 +229,18 @@ class MapContainer extends Component {
               <InputName
                 type="text"
                 id="input1"
-                placeholder="Street Name"
+                placeholder="Nombre calle"
                 onChange={(event) => this.handleChangeName(event)}
                 onKeyDown={(event) => this.handleKeyDown(event)}
               />
               <InputNumber
                 type="text"
                 id="input2"
-                placeholder="Street Number"
+                placeholder="Número puerta"
                 onChange={(event) => this.handleChangeNumber(event)}
                 onKeyDown={(event) => this.handleKeyDown(event)}
               />
-              <SearchButton onClick={this.searchStreet}>Search</SearchButton>
+              <SearchButton onClick={this.searchStreet}>Buscar</SearchButton>
             </InputGroup>
           </SearchNavSubBox>
         </SearchNav>
