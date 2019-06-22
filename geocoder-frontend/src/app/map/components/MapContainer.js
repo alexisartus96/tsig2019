@@ -163,10 +163,17 @@ class MapContainer extends Component {
       .then(response => response.text())
       .catch(err => console.error('Error', err))
       .then(resp => {
-        console.log(JSON.parse(resp)); // TODO: REMOVE THIS LINE.
+        // Return unique items
+        const respWithoutDuplicated = Object.values(
+          JSON.parse(resp).reduce((a, b) => {
+            a[b.codigo_via] = b;
+            return a
+          }, {})
+        )
+        console.log(respWithoutDuplicated); // TODO: REMOVE THIS LINE.
         this.setState({
           showPopup: false,  // "clean" previous search
-          containers: JSON.parse(resp)
+          containers: respWithoutDuplicated
         });
       });
   }
