@@ -45,7 +45,7 @@ class MapContainer extends Component {
     super(props);
     this.state = {
       apiKey: '',
-      containers: [], // Store containers list from backend. Each container has "id", "lat" and "lng"
+      locations: [], // Store locations list from backend. Each location has "id", "lat" and "lng"
       geolocation: new mapboxgl.GeolocateControl({
         positionOptions: {
           enableHighAccuracy: true,
@@ -55,7 +55,7 @@ class MapContainer extends Component {
         trackUserLocation: true,
       }),
       geolocationEnabled: false,
-      infoContainer: '',
+      infoLocation: '',
       load: true,
       searchType: 'calle-numero',
       selectedDescription: '',
@@ -173,7 +173,7 @@ class MapContainer extends Component {
         console.log(respWithoutDuplicated); // TODO: REMOVE THIS LINE.
         this.setState({
           showPopup: false,  // "clean" previous search
-          containers: respWithoutDuplicated
+          locations: respWithoutDuplicated
         });
       });
   }
@@ -183,7 +183,7 @@ class MapContainer extends Component {
   render = () => {
     const {
       geolocation,
-      containers, 
+      locations,
       showPopup, load, selectedId, selectedLat, selectedLon, showMenu, selectedDescription, selectedNumber
     } = this.state;
 
@@ -243,10 +243,10 @@ class MapContainer extends Component {
           </SearchNavSubBox>
         </SearchNav>
         <InfoComponent showMenu={showMenu}>
-        { (containers && containers.length > 0)
-                ? containers.map(elem => (
+        { (locations && locations.length > 0)
+                ? locations.map(elem => (
                   <ListItem key={elem.codigo_via} onClick={() => {
-                    // Check if current selected container was the last one selected before
+                    // Check if current selected location was the last one selected before
                     // In that case, hide the pop up
                     const prevSelectedLat = selectedLat;
                     const prevSelectedLon = selectedLon;
@@ -336,14 +336,14 @@ class MapContainer extends Component {
               layout={{ 'icon-image': 'pin', 'icon-allow-overlap': true }}
               images={['pin', pinIcon]}
             >
-              {/* Add containers from state */}
-              { (containers && containers.length > 0)
-                ? containers.map(elem => (
+              {/* Add locations from state */}
+              { (locations && locations.length > 0)
+                ? locations.map(elem => (
                   <Feature
                     key={elem.codigo_via}
                     coordinates={[elem.longitud, elem.latitud]}
                     onClick={() => {
-                      // Check if current selected container was the last one selected before
+                      // Check if current selected location was the last one selected before
                       // In that case, hide the pop up
                       const prevSelectedLat = selectedLat;
                       const prevSelectedLon = selectedLon;
@@ -367,7 +367,7 @@ class MapContainer extends Component {
                   />))
                 : null}
             </Layer>
-            { (containers.length > 0 && selectedId !== 0 && showPopup)
+            { (locations.length > 0 && selectedId !== 0 && showPopup)
               ? (
                 <Popup
                   key={selectedId}
