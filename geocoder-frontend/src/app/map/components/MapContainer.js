@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import ReactMapboxGl, { Layer, Feature, Popup } from 'react-mapbox-gl';
 import mapboxgl from 'mapbox-gl';
 import MultiTouch from 'mapbox-gl-multitouch';
-import trashLogo from '../assets/pin.png';
+import PinImage from '../assets/pin.png';
 import MapComponent from '../styles/MapComponent';
 import InfoComponent from '../styles/InfoComponent';
 import {ListItem, PointData} from '../styles/ListItem';
@@ -21,9 +21,9 @@ const enableMobileScroll = (map) => {
   }
 };
 
-// Used for rendering the trash and user icons (see Layer component below)
-const trashIcon = new Image(20, 20);
-trashIcon.src = trashLogo;
+// Used for rendering the pin icon (see Layer component below)
+const pinIcon = new Image(20, 20);
+pinIcon.src = PinImage;
 
 // Set user coordinates taken from Geolocation API.
 // This function is triggered when Geolocation is succesfull
@@ -376,12 +376,12 @@ class MapContainer extends Component {
             map.addControl(new mapboxgl.ScaleControl());
 
             // Change the cursor to a pointer when the mouse is over the places layer.
-            map.on('mouseenter', 'trashes', () => {
+            map.on('mouseenter', 'locations', () => {
               map.getCanvas().style.cursor = 'pointer';
             });
 
             // Change it back to a pointer when it leaves.
-            map.on('mouseleave', 'trashes', () => {
+            map.on('mouseleave', 'locations', () => {
               map.getCanvas().style.cursor = '';
             });
 
@@ -398,11 +398,11 @@ class MapContainer extends Component {
         }
           >
             <Layer
-              // Layer with trashes
+              // Layer with locations
               type="symbol"
-              id="trashes"
-              layout={{ 'icon-image': 'trash', 'icon-allow-overlap': true }}
-              images={['trash', trashIcon]}
+              id="locations"
+              layout={{ 'icon-image': 'pin', 'icon-allow-overlap': true }}
+              images={['pin', pinIcon]}
             >
               {/* Add containers from state */}
               { (containers && containers.length > 0)
