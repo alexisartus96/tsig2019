@@ -85,8 +85,7 @@ class MapContainer extends Component {
     this.Toggle = Toggle.bind(this);
   }
 
-  componentDidMount = () => {
-  }
+  componentDidMount = () => {}
 
   handleChangeSearchType = (e) => {
     const searchType = e.target.value;
@@ -201,30 +200,30 @@ class MapContainer extends Component {
                   type="radio"
                   value="calle-numero"
                   name="searchType"
-                  checked={this.radioButtonIsChecked('calle-numero')}
+                  checked={this.radioButtonIsChecked("calle-numero")}
                   onChange={this.handleChangeSearchType}
                 />
-                  Calle y Número
+                Calle y Número
               </LabelRadioButton>
               <LabelRadioButton>
                 <InputRadioButton
                   type="radio"
                   value="esquina"
                   name="searchType"
-                  checked={this.radioButtonIsChecked('esquina')}
+                  checked={this.radioButtonIsChecked("esquina")}
                   onChange={this.handleChangeSearchType}
                 />
-                  Esquina
+                Esquina
               </LabelRadioButton>
               <LabelRadioButton>
                 <InputRadioButton
                   type="radio"
                   value="inversa"
                   name="searchType"
-                  checked={this.radioButtonIsChecked('inversa')}
+                  checked={this.radioButtonIsChecked("inversa")}
                   onChange={this.handleChangeSearchType}
                 />
-                  Inversa
+                Inversa
               </LabelRadioButton>
             </InputGroup>
             <InputGroup>
@@ -232,35 +231,42 @@ class MapContainer extends Component {
                 type="text"
                 id="input1"
                 placeholder="Nombre calle"
-                onChange={(event) => this.handleChangeName(event)}
-                onKeyDown={(event) => this.handleKeyDown(event)}
+                onChange={event => this.handleChangeName(event)}
+                onKeyDown={event => this.handleKeyDown(event)}
               />
               <InputNumber
                 type="text"
                 id="input2"
                 placeholder="Número puerta"
-                onChange={(event) => this.handleChangeNumber(event)}
-                onKeyDown={(event) => this.handleKeyDown(event)}
+                onChange={event => this.handleChangeNumber(event)}
+                onKeyDown={event => this.handleKeyDown(event)}
               />
-              <SearchButton onClick={this.searchStreet}>Buscar</SearchButton>
+              <SearchButton onClick={this.searchStreet}>
+                Buscar
+              </SearchButton>
             </InputGroup>
           </SearchNavSubBox>
         </SearchNav>
         <InfoComponent showMenu={showMenu}>
-        { (locations && locations.length > 0)
-                ? locations.map(elem => (
-                  <ListItem key={elem.codigo_via} onClick={() => {
+          {locations && locations.length > 0
+            ? locations.map(elem => (
+                <ListItem
+                  key={elem.codigo_via}
+                  onClick={() => {
                     // Check if current selected location was the last one selected before
                     // In that case, hide the pop up
                     const prevSelectedLat = selectedLat;
                     const prevSelectedLon = selectedLon;
-                    if (prevSelectedLon === elem.longitud && prevSelectedLat === elem.latitud) {
+                    if (
+                      prevSelectedLon === elem.longitud &&
+                      prevSelectedLat === elem.latitud
+                    ) {
                       this.setState({
-                        showPopup: !showPopup,
+                        showPopup: !showPopup
                       });
                     } else {
                       this.setState({
-                        showPopup: true,
+                        showPopup: true
                       });
                     }
                     this.setState({
@@ -270,10 +276,13 @@ class MapContainer extends Component {
                       selectedDescription: elem.nombre_via,
                       selectedNumber: elem.puerta
                     });
-                  }}>
-                    <PointData>{`${elem.nombre_via} - ${elem.puerta}`}</PointData>
-                  </ListItem>))
-                : null}
+                  }}
+                >
+                  <PointData>{`${elem.nombre_via} - ${elem.puerta}`}</PointData>
+                </ListItem>
+              ))
+            : null
+          }
           {noResults && (
             <ListItem>
               <PointData>NO SE ENCONTRATON RESULTADOS</PointData>
@@ -286,24 +295,24 @@ class MapContainer extends Component {
             // style prop is required by React Mapbox
             style="mapbox://styles/mapbox/streets-v9" // eslint-disable-line react/style-prop-object
             containerStyle={{
-              height: '100%',
-              width: '100%',
+              height: "100%",
+              width: "100%"
             }}
-            onStyleLoad={(map) => {
+            onStyleLoad={map => {
               // Add button to detect user's current location
               map.addControl(geolocation);
               // Fly to user position and update user state when geolocation is triggered
-              geolocation.on('geolocate', (e) => {
+              geolocation.on("geolocate", e => {
                 map.flyTo({
-                  center: [this.state.selectedLon, this.state.selectedLat],
+                  center: [this.state.selectedLon, this.state.selectedLat]
                 });
                 this.setState({
-                  user: [e.coords.longitud, e.coords.latitud],
+                  user: [e.coords.longitud, e.coords.latitud]
                 });
               });
-              geolocation.on('trackuserlocationstart', () => {
+              geolocation.on("trackuserlocationstart", () => {
                 map.flyTo({
-                  center: [this.state.selectedLon, this.state.selectedLat],
+                  center: [this.state.selectedLon, this.state.selectedLat]
                 });
               });
               map.addControl(new mapboxgl.NavigationControl());
@@ -312,20 +321,20 @@ class MapContainer extends Component {
               map.addControl(new mapboxgl.ScaleControl());
 
               // Change the cursor to a pointer when the mouse is over the places layer.
-              map.on('mouseenter', 'locations', () => {
-                map.getCanvas().style.cursor = 'pointer';
+              map.on("mouseenter", "locations", () => {
+                map.getCanvas().style.cursor = "pointer";
               });
 
               // Change it back to a pointer when it leaves.
-              map.on('mouseleave', 'locations', () => {
-                map.getCanvas().style.cursor = '';
+              map.on("mouseleave", "locations", () => {
+                map.getCanvas().style.cursor = "";
               });
 
-              map.on('click', (e) => {
-                if (this.state.searchType === 'inversa') {
+              map.on("click", e => {
+                if (this.state.searchType === "inversa") {
                   // Set latitude and longitude to the inputs
-                  const input1 = document.getElementById('input1');
-                  const input2 = document.getElementById('input2');
+                  const input1 = document.getElementById("input1");
+                  const input2 = document.getElementById("input2");
                   input1.value = e.lngLat.lat;
                   input2.value = e.lngLat.lng;
                 }
@@ -336,50 +345,56 @@ class MapContainer extends Component {
               // Layer with locations
               type="symbol"
               id="locations"
-              layout={{ 'icon-image': 'pin', 'icon-allow-overlap': true }}
-              images={['pin', pinIcon]}
+              layout={{ "icon-image": "pin", "icon-allow-overlap": true }}
+              images={["pin", pinIcon]}
             >
               {/* Add locations from state */}
-              { (locations && locations.length > 0)
+              {locations && locations.length > 0
                 ? locations.map(elem => (
-                  <Feature
-                    key={elem.codigo_via}
-                    coordinates={[elem.longitud, elem.latitud]}
-                    onClick={() => {
-                      // Check if current selected location was the last one selected before
-                      // In that case, hide the pop up
-                      const prevSelectedLat = selectedLat;
-                      const prevSelectedLon = selectedLon;
-                      if (prevSelectedLon === elem.longitud && prevSelectedLat === elem.latitud) {
+                    <Feature
+                      key={elem.codigo_via}
+                      coordinates={[elem.longitud, elem.latitud]}
+                      onClick={() => {
+                        // Check if current selected location was the last one selected before
+                        // In that case, hide the pop up
+                        const prevSelectedLat = selectedLat;
+                        const prevSelectedLon = selectedLon;
+                        if (
+                          prevSelectedLon === elem.longitud &&
+                          prevSelectedLat === elem.latitud
+                        ) {
+                          this.setState({
+                            showPopup: !showPopup
+                          });
+                        } else {
+                          this.setState({
+                            showPopup: true
+                          });
+                        }
                         this.setState({
-                          showPopup: !showPopup,
+                          selectedId: elem.codigo_via,
+                          selectedLon: elem.longitud,
+                          selectedLat: elem.latitud,
+                          selectedDescription: elem.nombre_via,
+                          selectedNumber: elem.puerta
                         });
-                      } else {
-                        this.setState({
-                          showPopup: true,
-                        });
-                      }
-                      this.setState({
-                        selectedId: elem.codigo_via,
-                        selectedLon: elem.longitud,
-                        selectedLat: elem.latitud,
-                        selectedDescription: elem.nombre_via,
-                        selectedNumber: elem.puerta
-                      });
-                    }}
-                  />))
+                      }}
+                    />
+                  ))
                 : null}
             </Layer>
-            { (locations.length > 0 && selectedId !== 0 && showPopup)
-              ? (
-                <Popup
-                  key={selectedId}
-                  coordinates={[selectedLon, selectedLat]}
-                  className="popup"
-                >
-                  <SubBoxText textAlign="center" width="170px">{`${selectedDescription} - ${selectedNumber}`}</SubBoxText>
-                </Popup>
-              ) : null}
+            {locations.length > 0 && selectedId !== 0 && showPopup ? (
+              <Popup
+                key={selectedId}
+                coordinates={[selectedLon, selectedLat]}
+                className="popup"
+              >
+                <SubBoxText
+                  textAlign="center"
+                  width="170px"
+                >{`${selectedDescription} - ${selectedNumber}`}</SubBoxText>
+              </Popup>
+            ) : null}
           </Map>
         </MapComponent>
       </MapViewComponent>
