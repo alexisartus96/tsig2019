@@ -15,6 +15,9 @@ import { XMLGeocoder, XMLGeocoderCruce, XMLGeocoderInversa } from '../../utils/x
 const Map = ReactMapboxGl({
   accessToken: process.env.REACT_APP_MAPBOX_ACCESS_TOKEN,
 });
+// Set initial zoom and center options
+Map.defaultProps.zoom = [13.5];
+Map.defaultProps.center = [-56.165293, -34.919999];
 
 const enableMobileScroll = (map) => {
   if (window.innerWidth <= 425) {
@@ -51,7 +54,6 @@ class MapContainer extends Component {
           enableHighAccuracy: true,
           timeout: 6000,
         },
-        fitBoundsOptions: { maxZoom: 13.5 },
         trackUserLocation: true,
       }),
       geolocationEnabled: false,
@@ -280,54 +282,48 @@ class MapContainer extends Component {
               height: '100%',
               width: '100%',
             }}
-            center={load ? [-56.165293, -34.919999] : null}
-            zoom={load ? [10.5] : null}
-            onStyleLoad={
-          (map) => {
-            // Add button to detect user's current location
-            map.addControl(geolocation);
-            // Fly to user position and update user state when geolocation is triggered
-            geolocation.on('geolocate', (e) => {
-              map.flyTo({
-                center: [this.state.selectedLon, this.state.selectedLat],
-                zoom: 13.5,
+            onStyleLoad={(map) => {
+              // Add button to detect user's current location
+              map.addControl(geolocation);
+              // Fly to user position and update user state when geolocation is triggered
+              geolocation.on('geolocate', (e) => {
+                map.flyTo({
+                  center: [this.state.selectedLon, this.state.selectedLat],
+                });
+                this.setState({
+                  user: [e.coords.longitud, e.coords.latitud],
+                });
               });
-              this.setState({
-                user: [e.coords.longitud, e.coords.latitud],
+              geolocation.on('trackuserlocationstart', () => {
+                map.flyTo({
+                  center: [this.state.selectedLon, this.state.selectedLat],
+                });
               });
-            });
-            geolocation.on('trackuserlocationstart', () => {
-              map.flyTo({
-                center: [this.state.selectedLon, this.state.selectedLat],
-                zoom: 13.5,
+              map.addControl(new mapboxgl.NavigationControl());
+              enableMobileScroll(map);
+              map.addControl(new mapboxgl.FullscreenControl());
+              map.addControl(new mapboxgl.ScaleControl());
+
+              // Change the cursor to a pointer when the mouse is over the places layer.
+              map.on('mouseenter', 'locations', () => {
+                map.getCanvas().style.cursor = 'pointer';
               });
-            });
-            map.addControl(new mapboxgl.NavigationControl());
-            enableMobileScroll(map);
-            map.addControl(new mapboxgl.FullscreenControl());
-            map.addControl(new mapboxgl.ScaleControl());
 
-            // Change the cursor to a pointer when the mouse is over the places layer.
-            map.on('mouseenter', 'locations', () => {
-              map.getCanvas().style.cursor = 'pointer';
-            });
+              // Change it back to a pointer when it leaves.
+              map.on('mouseleave', 'locations', () => {
+                map.getCanvas().style.cursor = '';
+              });
 
-            // Change it back to a pointer when it leaves.
-            map.on('mouseleave', 'locations', () => {
-              map.getCanvas().style.cursor = '';
-            });
-
-            map.on('click', (e) => {
-              if (this.state.searchType === 'inversa') {
-                // Set latitude and longitude to the inputs
-                const input1 = document.getElementById('input1');
-                const input2 = document.getElementById('input2');
-                input1.value = e.lngLat.lat;
-                input2.value = e.lngLat.lng;
-              }
-            });
-          }
-        }
+              map.on('click', (e) => {
+                if (this.state.searchType === 'inversa') {
+                  // Set latitude and longitude to the inputs
+                  const input1 = document.getElementById('input1');
+                  const input2 = document.getElementById('input2');
+                  input1.value = e.lngLat.lat;
+                  input2.value = e.lngLat.lng;
+                }
+              });
+            }}
           >
             <Layer
               // Layer with locations
