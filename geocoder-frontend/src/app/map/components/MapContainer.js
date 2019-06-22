@@ -8,8 +8,6 @@ import InfoComponent from '../styles/InfoComponent';
 import {ListItem, PointData} from '../styles/ListItem';
 import SubBoxText from '../styles/SubBoxText';
 import MapViewComponent from '../styles/MapViewComponent';
-import RouteBox from '../styles/RouteBox';
-import InfoRoute from '../styles/InfoRoute';
 import ToggleMenu from '../styles/ToggleMenu';
 import { InputName, InputNumber, InputRadioButton, LabelRadioButton, SearchButton, SearchNav, SearchNavSubBox, InputGroup } from '../styles/SearchNav';
 
@@ -26,15 +24,6 @@ const enableMobileScroll = (map) => {
 // Used for rendering the trash and user icons (see Layer component below)
 const trashIcon = new Image(20, 20);
 trashIcon.src = trashLogo;
-
-function clearRouteInfo() {
-  this.setState({
-    route: null,
-    distance: null,
-    duration: null,
-    selectedRoute: null,
-  });
-}
 
 // Set user coordinates taken from Geolocation API.
 // This function is triggered when Geolocation is succesfull
@@ -128,10 +117,6 @@ class MapContainer extends Component {
     super(props);
     this.state = {
       user: [],
-      route: null, // The route to the selected container
-      distance: 0, // Distance (in meters) to selected container
-      duration: 0, // Estimated time to selected container
-      selectedRoute: '',
       geolocation: new mapboxgl.GeolocateControl({
         positionOptions: {
           enableHighAccuracy: true,
@@ -167,7 +152,6 @@ class MapContainer extends Component {
     // Check if geolocation is available in this device and browser
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(success.bind(this));
-      this.clearRouteInfo = clearRouteInfo.bind(this);
     }
     this.Toggle = Toggle.bind(this);
   }
@@ -266,7 +250,6 @@ class MapContainer extends Component {
 
   render() {
     const {
-      route, distance, duration, selectedRoute,
       geolocation,
       containers, 
       showPopup, load, selectedId, selectedLat, selectedLon, showMenu, selectedDescription, selectedNumber
@@ -340,7 +323,6 @@ class MapContainer extends Component {
                         showPopup: !showPopup,
                       });
                     } else {
-                      this.clearRouteInfo();
                       this.setState({
                         showPopup: true,
                       });
@@ -415,16 +397,6 @@ class MapContainer extends Component {
           }
         }
           >
-            { route && (
-              <Layer // Layer with the route
-                type="line"
-                id="route"
-                layout={{ 'line-cap': 'round', 'line-join': 'round' }}
-                paint={{ 'line-color': '#4790E5', 'line-width': 8 }}
-              >
-                <Feature coordinates={route} />
-              </Layer>
-            ) }
             <Layer
               // Layer with trashes
               type="symbol"
@@ -448,7 +420,6 @@ class MapContainer extends Component {
                           showPopup: !showPopup,
                         });
                       } else {
-                        this.clearRouteInfo();
                         this.setState({
                           showPopup: true,
                         });
@@ -472,22 +443,6 @@ class MapContainer extends Component {
                   className="popup"
                 >
                   <SubBoxText textAlign="center" width="170px">{`${selectedDescription} - ${selectedNumber}`}</SubBoxText>
-                  { (navigator.geolocation)
-                    // Only show route buttons and route info
-                    // if the device and the browser supports geolocation
-                    ? (
-                      <RouteBox>
-                        { route && (
-                          // Render distance and estimated time converted to km and min
-                          // and rounded to one decimal
-                          <InfoRoute>
-                            { `${Math.round(distance / 100) / 10} km` }
-                            { '\xa0\xa0\xa0\xa0' }
-                            { `${Math.round(duration / 6) / 10} min` }
-                          </InfoRoute>) }
-                      </RouteBox>
-                    )
-                    : null}
                 </Popup>
               ) : null}
           </Map>
