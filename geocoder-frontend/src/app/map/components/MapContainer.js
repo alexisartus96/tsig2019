@@ -58,7 +58,6 @@ class MapContainer extends Component {
       }),
       geolocationEnabled: false,
       infoLocation: '',
-      load: true,
       searchType: 'calle-numero',
       selectedDescription: '',
       selectedId: 0,
@@ -186,7 +185,8 @@ class MapContainer extends Component {
     const {
       geolocation,
       locations,
-      showPopup, load, selectedId, selectedLat, selectedLon, showMenu, selectedDescription, selectedNumber
+      selectedDescription, selectedId, selectedLat, selectedLon, selectedNumber,
+      showMenu, showPopup
     } = this.state;
 
     return (
