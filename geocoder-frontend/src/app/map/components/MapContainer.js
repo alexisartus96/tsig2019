@@ -1,15 +1,24 @@
 import React, { Component } from 'react';
-import ReactMapboxGl, { Layer, Feature, Popup } from 'react-mapbox-gl';
+import ReactMapboxGl, { Feature, Layer, Popup } from 'react-mapbox-gl';
 import mapboxgl from 'mapbox-gl';
 import MultiTouch from 'mapbox-gl-multitouch';
 import PinImage from '../assets/pin.png';
-import MapComponent from '../styles/MapComponent';
 import InfoComponent from '../styles/InfoComponent';
-import {ListItem, PointData} from '../styles/ListItem';
-import SubBoxText from '../styles/SubBoxText';
+import { ListItem, PointData } from '../styles/ListItem';
+import MapComponent from '../styles/MapComponent';
 import MapViewComponent from '../styles/MapViewComponent';
+import {
+  InputName,
+  InputNumber,
+  InputRadioButton,
+  LabelRadioButton,
+  SearchButton,
+  SearchNav,
+  SearchNavSubBox,
+  InputGroup
+} from '../styles/SearchNav';
+import SubBoxText from '../styles/SubBoxText';
 import ToggleMenu from '../styles/ToggleMenu';
-import { InputName, InputNumber, InputRadioButton, LabelRadioButton, SearchButton, SearchNav, SearchNavSubBox, InputGroup } from '../styles/SearchNav';
 import { XMLGeocoder, XMLGeocoderCruce, XMLGeocoderInversa } from '../../utils/xml';
 
 const Map = ReactMapboxGl({
