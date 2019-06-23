@@ -29,14 +29,6 @@ const enableMobileScroll = (map) => {
 const pinIcon = new Image(20, 20);
 pinIcon.src = PinImage;
 
-// Set user coordinates taken from Geolocation API.
-// This function is triggered when Geolocation is succesfull
-function success(pos) {
-  this.setState({
-    user: [pos.coords.longitud, pos.coords.latitud],
-  });
-}
-
 function Toggle() {
   this.setState({
     showMenu: !this.state.showMenu,
@@ -49,14 +41,6 @@ class MapContainer extends Component {
     this.state = {
       apiKey: '',
       locations: [], // Store locations list from backend. Each location has "id", "lat" and "lng"
-      geolocation: new mapboxgl.GeolocateControl({
-        positionOptions: {
-          enableHighAccuracy: true,
-          timeout: 6000,
-        },
-        trackUserLocation: true,
-      }),
-      geolocationEnabled: false,
       infoLocation: '',
       noResults: false,
       searchType: 'calle-numero',
@@ -66,22 +50,8 @@ class MapContainer extends Component {
       selectedLon: 0,
       selectedNumber: 0,
       showMenu: true,
-      showPopup: false,
-      user: []
+      showPopup: false
     };
-    const { geolocation } = this.state;
-
-    // Set geolocationEnabled state to false when geolocation finishes
-    geolocation.on('trackuserlocationend', () => {
-      this.setState({
-        geolocationEnabled: false,
-      });
-    });
-
-    // Check if geolocation is available in this device and browser
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(success.bind(this));
-    }
     this.Toggle = Toggle.bind(this);
   }
 
@@ -184,7 +154,6 @@ class MapContainer extends Component {
 
   render = () => {
     const {
-      geolocation,
       locations, noResults,
       selectedDescription, selectedId, selectedLat, selectedLon, selectedNumber,
       showMenu, showPopup
@@ -299,22 +268,6 @@ class MapContainer extends Component {
               width: "100%"
             }}
             onStyleLoad={map => {
-              // Add button to detect user's current location
-              map.addControl(geolocation);
-              // Fly to user position and update user state when geolocation is triggered
-              geolocation.on("geolocate", e => {
-                map.flyTo({
-                  center: [this.state.selectedLon, this.state.selectedLat]
-                });
-                this.setState({
-                  user: [e.coords.longitud, e.coords.latitud]
-                });
-              });
-              geolocation.on("trackuserlocationstart", () => {
-                map.flyTo({
-                  center: [this.state.selectedLon, this.state.selectedLat]
-                });
-              });
               map.addControl(new mapboxgl.NavigationControl());
               enableMobileScroll(map);
               map.addControl(new mapboxgl.FullscreenControl());
