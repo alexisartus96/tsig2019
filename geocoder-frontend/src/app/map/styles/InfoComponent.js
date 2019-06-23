@@ -25,16 +25,17 @@ box-shadow: 1px 1px 10px 1px #888888;
   width: 230px;
 }
 
+@media (max-width: 645px) {
+  top: 130px;
+}
+
+@media (max-width: 579px) {
+  height: calc(80vh - 85px);
+  top: 178px;
+}
+
 @media (max-width: 425px) {
-  flex-direction: column;
-  height: auto;
-  flex: 2;
-  width: 80vw;
-  justify-content: center;
-  align-items: center;
-  margin-left: 0;
-  top: 58%;
-  max-height: 40vh;
+  display: none;
 }
 
 border-radius: 2%;

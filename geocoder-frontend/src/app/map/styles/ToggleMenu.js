@@ -11,18 +11,24 @@ const ToggleMenu = styled.div`
   box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.3);
   position: absolute;
   z-index: 1;
-  top: 15%;
+  top: 140px;
   left: ${props => (props.moveLeft ? '310px' : '1%')};
   transform: ${props => (props.moveLeft ? 'none' : 'translateX(-50%) rotate(-180deg)')};
 
   @media (max-width: 1024px) {
     left: ${props => (props.moveLeft ? '250px' : '1%')};
   }
-  
+
+  @media (max-width: 645px) {
+    top: 150px;
+  }
+
+  @media (max-width: 579px) {
+    top: 200px;
+  }
+
   @media (max-width: 425px) {
-    top: ${props => (props.moveLeft ? '55%' : '97%')};
-    left: 50%;
-    transform: ${props => (props.moveLeft ? 'translateX(-50%) translateY(-50%) rotate(-90deg)' : 'translateX(-50%) translateY(-50%) rotate(-270deg)')};
+    display: none;
   }
 `;
 
