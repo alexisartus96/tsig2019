@@ -62,9 +62,13 @@ class MapContainer extends Component {
       showPopup: false
     };
     this.Toggle = Toggle.bind(this);
+    this.inputRef = React.createRef();
   }
 
-  componentDidMount = () => {}
+  componentDidMount = () => {
+    const input1 = document.getElementById('input1');
+    input1.focus();
+  }
 
   handleChangeSearchType = (e) => {
     const searchType = e.target.value;
@@ -81,10 +85,12 @@ class MapContainer extends Component {
       if (searchType === 'calle-numero') {
         input1.placeholder = 'Nombre calle';
         input2.placeholder = 'Número puerta';
+        input1.focus();
 
       } else if (searchType === 'esquina') {
         input1.placeholder = 'Nombre calle 1';
         input2.placeholder = 'Nombre calle 2';
+        input1.focus();
 
       } else if (searchType === 'inversa') {
         input1.placeholder = 'Latitud';
