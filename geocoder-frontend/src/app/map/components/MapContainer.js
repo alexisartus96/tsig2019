@@ -88,8 +88,8 @@ class MapContainer extends Component {
         input1.focus();
 
       } else if (searchType === 'esquina') {
-        input1.placeholder = 'Nombre calle 1';
-        input2.placeholder = 'Nombre calle 2';
+        input1.placeholder = 'Nombre calle';
+        input2.placeholder = 'Nombre esquina';
         input1.focus();
 
       } else if (searchType === 'inversa') {
