@@ -51,6 +51,7 @@ class MapContainer extends Component {
       apiKey: '',
       locations: [], // Store locations list from backend. Each location has "id", "lat" and "lng"
       infoLocation: '',
+      map: null,
       noResults: false,
       searchType: 'calle-numero',
       selectedDescription: '',
@@ -166,6 +167,10 @@ class MapContainer extends Component {
       });
   }
 
+  getMap = (map) => {
+    this.setState({map: map});
+  }
+
   radioButtonIsChecked = (searchType) => (this.state.searchType === searchType);
 
   render = () => {
@@ -260,6 +265,12 @@ class MapContainer extends Component {
                       selectedLat: elem.latitud,
                       selectedDescription: elem.nombre_via,
                       selectedNumber: elem.puerta
+                    }, () => {
+                      const currentZoom = this.state.map.getZoom();
+                      this.state.map.flyTo({
+                        center: [this.state.selectedLon, this.state.selectedLat],
+                        zoom: currentZoom
+                      });
                     });
                   }}
                 >
@@ -322,6 +333,8 @@ class MapContainer extends Component {
                 clearTimeout(timer);
                 prevent = true;
               });
+
+              this.getMap(map);
             }}
           >
             <Layer
