@@ -152,12 +152,22 @@ class MapContainer extends Component {
       .then(resp => {
         console.log(JSON.parse(resp));
         // Return unique items
-        const respWithoutDuplicated = Object.values(
-          JSON.parse(resp).reduce((a, b) => {
-            a[b.codigo_via + b.puerta] = b;
-            return a
-          }, {})
-        )
+        let respWithoutDuplicated = {};
+        if (this.state-searchType === 'esquina') {
+          respWithoutDuplicated = Object.values(
+            JSON.parse(resp).reduce((a, b) => {
+              a[b.wkt] = b;
+              return a
+            }, {})
+          )
+        } else {
+          respWithoutDuplicated = Object.values(
+            JSON.parse(resp).reduce((a, b) => {
+              a[b.codigo_via + b.puerta] = b;
+              return a
+            }, {})
+          )
+        }
         console.log(respWithoutDuplicated); // TODO: REMOVE THIS LINE.
         this.setState({
           showPopup: false,  // "clean" previous search
