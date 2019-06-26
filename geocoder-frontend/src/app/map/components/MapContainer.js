@@ -149,10 +149,11 @@ class MapContainer extends Component {
       .then(response => response.text())
       .catch(err => console.error('Error', err))
       .then(resp => {
+        console.log(JSON.parse(resp));
         // Return unique items
         const respWithoutDuplicated = Object.values(
           JSON.parse(resp).reduce((a, b) => {
-            a[b.codigo_via] = b;
+            a[b.codigo_via + b.puerta] = b;
             return a
           }, {})
         )
@@ -334,7 +335,7 @@ class MapContainer extends Component {
               {locations && locations.length > 0
                 ? locations.map(elem => (
                     <Feature
-                      key={elem.codigo_via}
+                      key={`${elem.codigo_via}-${elem.puerta}`}
                       coordinates={[elem.longitud, elem.latitud]}
                       onClick={() => {
                         // Check if current selected location was the last one selected before
