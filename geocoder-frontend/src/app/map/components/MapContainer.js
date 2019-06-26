@@ -274,7 +274,7 @@ class MapContainer extends Component {
                     });
                   }}
                 >
-                  <PointData>{`${elem.nombre_via} - ${elem.puerta}`}</PointData>
+                  <PointData>{this.state.searchType === 'esquina' ? `${elem.nombre_via} esq. ${elem.nombre_via_esquina}` : `${elem.nombre_via} - ${elem.puerta}` }</PointData>
                 </ListItem>
               ))
             : null
